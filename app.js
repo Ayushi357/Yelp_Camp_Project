@@ -5,32 +5,13 @@ var express = require("express"),
   Campground = require("./models/campground"),
   seedDB = require("./seeds");
 
-seedDB();
-
 mongoose.connect("mongodb://localhost:27017/yelp_camp", {
   useNewUrlParser: true
 });
 app.use(bodyParser.urlencoded({ extended: true }));
 
 app.set("view engine", "ejs");
-
-// Campground.create(
-//     {
-//       name: 'Yosemite Westlake',
-//       image:
-//           'https://images.unsplash.com/photo-1533243367503-0b7337004671?ixlib=rb-1.2.1&auto=format&fit=crop&w=1050&q=80',
-//       description:
-//           'This is a huge Yosemite Westlake, no bathrooms. It\'s very
-//           beautiful and serene.'
-//     },
-//     function(err, campground) {
-//       if (err) {
-//         console.log(err);
-//       } else {
-//         console.log('Newly Created Campground');
-//         console.log(campground);
-//       }
-//     });
+seedDB();
 
 app.get("/", function(req, res) {
   res.render("landing");
@@ -74,14 +55,17 @@ app.get("/campgrounds/new", function(req, res) {
 // SHOW - shows more info about one campground
 app.get("/campgrounds/:id", function(req, res) {
   // find the campground with provided ID
-  Campground.findById(req.params.id, function(err, foundCampground) {
-    if (err) {
-      console.log(err);
-    } else {
-      // render show template with that campground
-      res.render("show", { campground: foundCampground });
-    }
-  });
+  Campground.findById(req.params.id)
+    .populate("comments")
+    .exec(function(err, foundCampground) {
+      if (err) {
+        console.log(err);
+      } else {
+        console.log(foundCampground);
+        // render show template with that campground
+        res.render("show", { campground: foundCampground });
+      }
+    });
 });
 
 app.listen(3000, function() {
