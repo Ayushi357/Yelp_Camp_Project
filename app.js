@@ -84,7 +84,7 @@ app.get('/campgrounds/:id', function(req, res) {
 // COMMENT ROUTES
 // =====================
 
-app.get('/campgrounds/:id/comments/new', function(req, res) {
+app.get('/campgrounds/:id/comments/new', isloggedIn, function(req, res) {
   // find campground by id
   Campground.findById(req.params.id, function(err, campground) {
     if (err) {
@@ -95,7 +95,7 @@ app.get('/campgrounds/:id/comments/new', function(req, res) {
   });
 });
 
-app.post('/campgrounds/:id/comments', function(req, res) {
+app.post('/campgrounds/:id/comments', isloggedIn, function(req, res) {
   // lookup campground using ID
   Campground.findById(req.params.id, function(err, campground) {
     if (err) {
@@ -153,6 +153,20 @@ app.post(
     function(req, res) {
 
     });
+
+// logout route
+app.get('/logout', function(req, res) {
+  req.logOut();
+  res.redirect('/campgrounds');
+});
+
+function isloggedIn(req, res, next) {
+  if (req.isAuthenticated()) {
+    return next();
+  }
+  res.redirect('/login');
+}
+
 
 app.listen(3000, function() {
   console.log('THE YELP CAMP SERVER HAS STARTED!');
