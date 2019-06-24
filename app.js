@@ -13,6 +13,18 @@ app.set('view engine', 'ejs');
 app.use(express.static(__dirname + '/public'));
 seedDB();
 
+// PASSPORT CONFIGURATION
+app.use(require('express-session')({
+  secret: 'All around me are familiar faces.',
+  resave: false,
+  saveUninitialized: false
+}));
+app.use(passport.initialize());
+app.use(passport.session());
+passport.use(new LocalStrategy(User.authenticate()));
+passport.serializeUser(User.serializeUser());
+passport.deserializeUser(User.deserializeUser());
+
 app.get('/', function(req, res) {
   res.render('landing');
 });
@@ -94,12 +106,37 @@ app.post('/campgrounds/:id/comments', function(req, res) {
         if (err) {
           console.log(err);
         } else {
+          // create new comment
+          // connect new comment to campground
           campground.comments.push(comment);
           campground.save();
+          // redirect campground show page
           res.redirect('/campgrounds/' + campground._id);
         }
       });
     }
+  });
+});
+
+// =================
+// AUTH ROUTES
+// =================
+
+// show register form
+app.get('/register', function(req, res) {
+  res.render('register');
+});
+// handle sign up logic
+app.post('/register', function(req, res) {
+  var newUser = new User({username: req.body.username});
+  User.register(newUser, req.body.password, function(err, user) {
+    if (err) {
+      console.log(err);
+      return res.render('register');
+    }
+    passport.authenticate('local')(req, res, function() {
+      res.redirect('/campgrounds');
+    });
   });
 });
 
