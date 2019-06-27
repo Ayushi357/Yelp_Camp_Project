@@ -1,3 +1,5 @@
+require('dotenv').config();
+
 var express = require('express'), app = express(),
     bodyParser = require('body-parser'), mongoose = require('mongoose'),
     flash = require('connect-flash'), passport = require('passport'),
@@ -38,8 +40,8 @@ passport.deserializeUser(User.deserializeUser());
 
 app.use(function(req, res, next) {
   res.locals.currentUser = req.user;
-  res.locals.error = req.flash("error")
-  res.locals.success = req.flash("success");
+  res.locals.error = req.flash('error')
+  res.locals.success = req.flash('success');
   next();
 });
 
