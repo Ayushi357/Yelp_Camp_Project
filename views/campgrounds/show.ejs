@@ -23,14 +23,14 @@
           <a
             class="btn btn-xs btn-warning"
             href="/campgrounds/<%= campground._id %>/edit"
-            >Edit Campground</a
+            >Edit</a
           >
-          <form   
+          <form
             class="delete-form"
             action="/campgrounds/<%= campground._id %>?_method=DELETE"
             method="POST"
           >
-            <button class="btn btn-xs btn-danger">Delete Campground</button>
+            <button class="btn btn-xs btn-danger">Delete</button>
           </form>
           <% } %>
         </div>
